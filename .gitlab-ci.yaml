@@ -1,0 +1,21 @@
+stages:
+  - deploy
+  - test_web_server
+
+variables:
+  DOCKER_HOST: "unix:///var/run/docker.sock"
+
+before_script:
+  - apt-get update -y
+  - apt-get install -y docker-compose
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying application..."
+    - docker-compose up -d
+
+test_web_server:
+  stage: test_web_server
+  script:
+    - retry 5 curl -s http://localhost:8888 || exit 1
